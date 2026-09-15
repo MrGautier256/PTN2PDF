@@ -1,25 +1,37 @@
 <div align="center">
   <img src="assets/icon.svg" width="72" height="72" alt="Logo PTN2PDF" />
   <h1>PTN2PDF</h1>
-  <p><strong>Fusionnez, réordonnez et nettoyez vos PDF. Tout reste sur votre machine, aucun fichier n'est envoyé nulle part.</strong></p>
+  <p><strong>Fusionnez, convertissez et nettoyez vos PDF. Tout reste sur votre machine, aucun fichier n'est envoyé nulle part.</strong></p>
 </div>
 
 ---
 
-PTN2PDF est un petit outil de manipulation de PDF **100 % local**. Aucun serveur distant, aucun envoi de fichier : tout le traitement se fait dans votre navigateur (ou dans l'application de bureau). Idéal pour assembler rapidement plusieurs documents sans les confier à un service en ligne.
+PTN2PDF est un outil de manipulation de PDF **100 % local**. Aucun serveur distant, aucun envoi de fichier : tout le traitement se fait dans votre navigateur (ou dans l'application de bureau). Idéal pour assembler, convertir et nettoyer des documents sans les confier à un service en ligne.
 
 ## Fonctionnalités
 
-- **Import multiple** : glissez-déposez plusieurs PDF ou parcourez vos fichiers.
-- **Vignettes de toutes les pages** : chaque page est rendue en aperçu (via pdf.js).
-- **Réorganisation par glisser-déposer** : changez l'ordre des pages à la souris.
-- **Rotation** : pivotez une page ou une sélection à gauche / à droite.
-- **Suppression** : retirez les pages inutiles, une par une ou par lot.
-- **Sélection multiple** : cases à cocher, clic + Shift (plage), clic + Ctrl (ajout), et sélection au lasso (marquee).
-- **Aperçu grand format** : ouvrez une page en grand dans une fenêtre modale.
-- **Code couleur par document source** : repérez d'un coup d'œil de quel fichier provient chaque page.
-- **Export fusionné** : générez un PDF unique regroupant toutes les pages, dans l'ordre choisi (via pdf-lib).
-- **Raccourcis clavier** : `Suppr` pour supprimer la sélection, `Échap` pour désélectionner ou fermer l'aperçu.
+### Composer le document
+- **Import multiple** : glissez-déposez des **PDF** et des **images** (PNG, JPEG, WebP), ou parcourez vos fichiers.
+- **Images → PDF** : chaque image importée devient une page réordonnable.
+- **Vignettes de toutes les pages**, rendues via pdf.js.
+- **Réorganisation par glisser-déposer**.
+- **Rotation, suppression, duplication**, à l'unité ou par sélection.
+- **Insertion de pages blanches** (A4 ou Lettre, portrait ou paysage).
+- **Sélection multiple** : cases, clic + Shift (plage), clic + Ctrl (ajout), lasso, « Tout sélectionner » et « Inverser ».
+- **Annuler / Rétablir** (`Ctrl+Z` / `Ctrl+Y`) sur toutes les opérations.
+- **Zoom des vignettes** réglable, **aperçu grand format** navigable (flèches précédent/suivant).
+- **Code couleur par document source**.
+
+### Exporter
+- **Fusionner** toutes les pages en un seul PDF, ou **extraire uniquement la sélection**.
+- **Découper** : un PDF par document source, le tout dans une archive ZIP.
+- **PDF → images** : exporter les pages en PNG ou JPEG dans un ZIP (résolution réglable), ou une page seule en un clic.
+- **Compresser** : rastérisation des pages en JPEG (résolution et qualité réglables) pour réduire le poids.
+- **Finitions** : numérotation des pages, filigrane, édition des métadonnées (titre, auteur).
+
+### Confort
+- **Persistance de session** : votre travail est conservé automatiquement en local (IndexedDB) et restauré à la réouverture. Rien ne quitte l'appareil.
+- **Raccourcis clavier** : `Suppr` (supprimer la sélection), `Ctrl+A` (tout sélectionner), `Ctrl+Z`/`Ctrl+Y` (annuler/rétablir), `Échap` (fermer/désélectionner), flèches (naviguer dans l'aperçu).
 
 ## Utilisation
 
@@ -58,6 +70,7 @@ Ou double-cliquez sur `build.bat`. L'exécutable portable est généré dans le 
 | --- | --- |
 | Rendu des pages PDF | [pdf.js](https://mozilla.github.io/pdf.js/) |
 | Manipulation / export PDF | [pdf-lib](https://pdf-lib.js.org/) |
+| Archives ZIP | [JSZip](https://stuk.github.io/jszip/) |
 | Glisser-déposer | [SortableJS](https://sortablejs.github.io/Sortable/) |
 | Application de bureau | [Electron](https://www.electronjs.org/) + [electron-builder](https://www.electron.build/) |
 | Interface | HTML, CSS et JavaScript natif (modules ES), sans framework |
@@ -68,15 +81,19 @@ Les bibliothèques front-end sont vendorisées dans `vendor/` pour un fonctionne
 
 ```
 PTN2PDF/
-├── index.html          # Interface
-├── css/style.css       # Styles (thème clair / sombre automatique)
-├── js/app.js           # Logique de l'application
-├── vendor/             # Bibliothèques (pdf.js, pdf-lib, SortableJS)
-├── assets/             # Icônes
-├── electron/main.js    # Application de bureau Electron
-├── serve.ps1           # Serveur statique local (PowerShell)
-├── start.bat           # Lance le serveur + le navigateur
-└── build.bat           # Génère l'exécutable portable
+├── index.html            # Interface
+├── css/style.css         # Styles (thème clair / sombre automatique)
+├── js/
+│   ├── app.js            # État, interface et orchestration
+│   ├── pdf-utils.js      # Rendu pdf.js et images
+│   ├── export.js         # Exports (fusion, découpe, compression, images, finitions)
+│   └── persistence.js    # Sauvegarde de session locale (IndexedDB)
+├── vendor/               # Bibliothèques (pdf.js, pdf-lib, JSZip, SortableJS)
+├── assets/               # Icônes
+├── electron/main.js      # Application de bureau Electron
+├── serve.ps1             # Serveur statique local (PowerShell)
+├── start.bat             # Lance le serveur + le navigateur
+└── build.bat             # Génère l'exécutable portable
 ```
 
 ## Confidentialité

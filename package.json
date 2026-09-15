@@ -1,7 +1,7 @@
 {
   "name": "ptn2pdf",
-  "version": "1.0.0",
-  "description": "Fusionner, réordonner et nettoyer des PDF, 100% local.",
+  "version": "1.1.0",
+  "description": "Fusionner, convertir et nettoyer des PDF et des images, 100% local.",
   "main": "electron/main.js",
   "scripts": {
     "start": "powershell -NoProfile -ExecutionPolicy Bypass -File serve.ps1",
@@ -15,6 +15,7 @@
   "devDependencies": {
     "electron": "^43.0.0",
     "electron-builder": "^25.0.0",
+    "jszip": "^3.10.2",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^6.1.200",
     "sortablejs": "^1.15.7"
