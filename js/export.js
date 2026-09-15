@@ -212,6 +212,36 @@ export async function exportSinglePageImage(page, ctx, index) {
   download(bytes, `page-${index + 1}.png`, 'image/png');
 }
 
+/**
+ * OCR 100 % local : chaque page est rastérisée, reconnue par Tesseract (moteur et données
+ * vendorisés dans vendor/tesseract/, aucun accès réseau), puis assemblée en un PDF cherchable
+ * (image + couche de texte invisible sélectionnable).
+ */
+export async function exportOcrPdf(pages, ctx, { langs = 'fra+eng', dpi = 200, onProgress }, filename) {
+  const base = new URL('vendor/tesseract/', document.baseURI).href;
+  const worker = await Tesseract.createWorker(langs, 1, {
+    workerPath: base + 'worker.min.js',
+    corePath: base + 'tesseract-core-simd-lstm.wasm.js',
+    langPath: base + 'lang',
+    logger: () => {},
+  });
+  try {
+    const out = await PDFDocument.create();
+    for (let i = 0; i < pages.length; i++) {
+      if (onProgress) onProgress(i + 1, pages.length);
+      const canvas = await ctx.renderCanvas(pages[i], { dpi });
+      const { data } = await worker.recognize(canvas, {}, { pdf: true });
+      const pageDoc = await PDFDocument.load(Uint8Array.from(data.pdf));
+      const copied = await out.copyPages(pageDoc, pageDoc.getPageIndices());
+      copied.forEach((p) => out.addPage(p));
+    }
+    const bytes = await out.save();
+    download(bytes, ensureExt(filename, 'pdf'), 'application/pdf');
+  } finally {
+    await worker.terminate();
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /*  Helpers noms de fichiers                                           */
 /* ------------------------------------------------------------------ */

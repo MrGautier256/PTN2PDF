@@ -32,6 +32,9 @@ const MIME = {
   '.png': 'image/png',
   '.ico': 'image/x-icon',
   '.json': 'application/json',
+  '.wasm': 'application/wasm',
+  '.gz': 'application/gzip',
+  '.traineddata': 'application/octet-stream',
 };
 
 function startServer() {

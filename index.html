@@ -14,14 +14,18 @@
       <img src="assets/icon.svg" alt="" class="app-header__logo" width="36" height="36" />
       <div>
         <h1>PTN2PDF</h1>
-        <p>Fusionnez, convertissez et nettoyez vos PDF. Tout reste sur votre machine, aucun fichier n'est envoyé nulle part.</p>
+        <p data-i18n="app.subtitle">Fusionnez, convertissez et nettoyez vos PDF. Tout reste sur votre machine, aucun fichier n'est envoyé nulle part.</p>
       </div>
     </div>
     <div class="app-header__actions">
-      <button id="undo-btn" class="btn btn--ghost btn--icon" title="Annuler (Ctrl+Z)" disabled>⤺</button>
-      <button id="redo-btn" class="btn btn--ghost btn--icon" title="Rétablir (Ctrl+Y)" disabled>⤻</button>
-      <button id="clear-all-btn" class="btn btn--ghost" hidden>Tout effacer</button>
-      <label class="btn btn--primary" for="file-input">+ Ajouter des fichiers</label>
+      <select id="lang-select" class="lang-select" data-i18n-aria="lang.label" aria-label="Langue">
+        <option value="fr">FR</option>
+        <option value="en">EN</option>
+      </select>
+      <button id="undo-btn" class="btn btn--ghost btn--icon" data-i18n-title="action.undo" title="Annuler (Ctrl+Z)" disabled>⤺</button>
+      <button id="redo-btn" class="btn btn--ghost btn--icon" data-i18n-title="action.redo" title="Rétablir (Ctrl+Y)" disabled>⤻</button>
+      <button id="clear-all-btn" class="btn btn--ghost" data-i18n="action.clearAll" hidden>Tout effacer</button>
+      <label class="btn btn--primary" for="file-input" data-i18n="action.addFiles">+ Ajouter des fichiers</label>
     </div>
   </header>
 
@@ -33,20 +37,20 @@
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M12 3v12m0-12 4 4m-4-4-4 4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <p><strong>Glissez-déposez vos fichiers PDF ou images ici</strong></p>
-        <p class="dropzone__hint">ou cliquez pour parcourir - PDF, PNG, JPEG, WebP - plusieurs fichiers possibles</p>
+        <p><strong data-i18n="dropzone.title">Glissez-déposez vos fichiers PDF ou images ici</strong></p>
+        <p class="dropzone__hint" data-i18n="dropzone.hint">ou cliquez pour parcourir - PDF, PNG, JPEG, WebP - plusieurs fichiers possibles</p>
       </div>
     </section>
 
     <section id="toolbar" class="toolbar" hidden>
       <div class="toolbar__group">
-        <button id="select-all-btn" type="button" class="btn btn--ghost btn--sm">Tout sélectionner</button>
-        <button id="invert-btn" type="button" class="btn btn--ghost btn--sm">Inverser</button>
-        <button id="insert-blank-btn" type="button" class="btn btn--ghost btn--sm">+ Page blanche</button>
+        <button id="select-all-btn" type="button" class="btn btn--ghost btn--sm" data-i18n="toolbar.selectAll">Tout sélectionner</button>
+        <button id="invert-btn" type="button" class="btn btn--ghost btn--sm" data-i18n="toolbar.invert">Inverser</button>
+        <button id="insert-blank-btn" type="button" class="btn btn--ghost btn--sm" data-i18n="toolbar.insertBlank">+ Page blanche</button>
       </div>
       <div class="toolbar__group toolbar__zoom">
         <span class="toolbar__zoom-icon" aria-hidden="true">▪</span>
-        <input id="zoom-range" type="range" min="120" max="340" value="230" step="10" aria-label="Taille des vignettes" />
+        <input id="zoom-range" type="range" min="120" max="340" value="230" step="10" data-i18n-aria="toolbar.zoomLabel" aria-label="Taille des vignettes" />
         <span class="toolbar__zoom-icon toolbar__zoom-icon--big" aria-hidden="true">▪</span>
       </div>
     </section>
@@ -54,114 +58,115 @@
     <section id="pages-panel" class="pages-panel" hidden>
       <div class="pages-panel__meta">
         <span id="page-count" class="page-count"></span>
-        <span class="pages-panel__hint">Glissez une vignette pour réordonner - cochez ou cliquez-glissez pour sélectionner</span>
+        <span class="pages-panel__hint" data-i18n="panel.hint">Glissez une vignette pour réordonner - cochez ou cliquez-glissez pour sélectionner</span>
       </div>
       <div id="selection-bar" class="selection-bar" hidden>
         <span id="selection-count"></span>
         <div class="selection-bar__actions">
-          <button id="sel-rotate-left" type="button" class="btn btn--ghost" title="Pivoter à gauche">⟲</button>
-          <button id="sel-rotate-right" type="button" class="btn btn--ghost" title="Pivoter à droite">⟳</button>
-          <button id="sel-duplicate" type="button" class="btn btn--ghost">Dupliquer</button>
-          <button id="sel-delete" type="button" class="btn btn--ghost">Supprimer</button>
-          <button id="sel-clear" type="button" class="btn btn--ghost">Désélectionner</button>
+          <button id="sel-rotate-left" type="button" class="btn btn--ghost" data-i18n-title="sel.rotateLeft" title="Pivoter à gauche">⟲</button>
+          <button id="sel-rotate-right" type="button" class="btn btn--ghost" data-i18n-title="sel.rotateRight" title="Pivoter à droite">⟳</button>
+          <button id="sel-duplicate" type="button" class="btn btn--ghost" data-i18n="sel.duplicate">Dupliquer</button>
+          <button id="sel-delete" type="button" class="btn btn--ghost" data-i18n="sel.delete">Supprimer</button>
+          <button id="sel-clear" type="button" class="btn btn--ghost" data-i18n="sel.deselect">Désélectionner</button>
         </div>
       </div>
       <div id="pages-grid" class="pages-grid" role="list"></div>
     </section>
 
     <div id="empty-state" class="empty-state" hidden>
-      <p>Toutes les pages ont été supprimées.</p>
+      <p data-i18n="empty.message">Toutes les pages ont été supprimées.</p>
     </div>
   </main>
 
   <footer id="export-bar" class="export-bar" hidden>
     <span class="export-bar__summary" id="export-summary"></span>
-    <button id="open-export-btn" class="btn btn--primary btn--large">Exporter…</button>
+    <button id="open-export-btn" class="btn btn--primary btn--large" data-i18n="exportbar.button">Exporter…</button>
   </footer>
 
   <!-- Modale d'export -->
   <div id="export-modal" class="modal" hidden>
     <div class="modal__panel" role="dialog" aria-labelledby="export-modal-title" aria-modal="true">
       <div class="modal__header">
-        <h2 id="export-modal-title">Exporter</h2>
-        <button class="modal__close" data-close-export aria-label="Fermer">✕</button>
+        <h2 id="export-modal-title" data-i18n="export.title">Exporter</h2>
+        <button class="modal__close" data-close-export data-i18n-aria="common.close" aria-label="Fermer">✕</button>
       </div>
 
       <div class="modal__body">
         <fieldset class="field-group">
-          <legend>Que voulez-vous exporter ?</legend>
-          <label class="radio"><input type="radio" name="export-mode" value="merge" checked /> <span>Fusionner tout le document <em id="opt-merge-count"></em></span></label>
-          <label class="radio"><input type="radio" name="export-mode" value="selection" /> <span>Extraire uniquement la sélection <em id="opt-selection-count"></em></span></label>
-          <label class="radio"><input type="radio" name="export-mode" value="split" /> <span>Découper : un PDF par document source (ZIP)</span></label>
-          <label class="radio"><input type="radio" name="export-mode" value="images" /> <span>Exporter les pages en images (ZIP)</span></label>
+          <legend data-i18n="export.legend">Que voulez-vous exporter ?</legend>
+          <label class="radio"><input type="radio" name="export-mode" value="merge" checked /> <span><span data-i18n="export.mode.merge">Fusionner tout le document</span> <em id="opt-merge-count"></em></span></label>
+          <label class="radio"><input type="radio" name="export-mode" value="selection" /> <span><span data-i18n="export.mode.selection">Extraire uniquement la sélection</span> <em id="opt-selection-count"></em></span></label>
+          <label class="radio"><input type="radio" name="export-mode" value="split" /> <span data-i18n="export.mode.split">Découper : un PDF par document source (ZIP)</span></label>
+          <label class="radio"><input type="radio" name="export-mode" value="images" /> <span data-i18n="export.mode.images">Exporter les pages en images (ZIP)</span></label>
+          <label class="radio"><input type="radio" name="export-mode" value="ocr" /> <span data-i18n="export.mode.ocr">Rendre le PDF cherchable (OCR)</span></label>
         </fieldset>
 
         <div class="field">
-          <label for="export-filename" id="export-filename-label">Nom du fichier</label>
+          <label for="export-filename" id="export-filename-label" data-i18n="export.filename">Nom du fichier</label>
           <input id="export-filename" type="text" value="document" />
         </div>
 
         <!-- Options PDF -->
         <div id="pdf-options">
           <details class="opt" id="opt-compress-wrap">
-            <summary><label class="check"><input type="checkbox" id="opt-compress" /> Compresser (rastérise les pages en images)</label></summary>
+            <summary><label class="check"><input type="checkbox" id="opt-compress" /> <span data-i18n="opt.compress">Compresser</span></label></summary>
             <div class="opt__body">
               <div class="field field--inline">
-                <label for="opt-compress-dpi">Résolution</label>
+                <label for="opt-compress-dpi" data-i18n="opt.resolution">Résolution</label>
                 <select id="opt-compress-dpi">
-                  <option value="96">96 dpi (léger)</option>
-                  <option value="150" selected>150 dpi (équilibré)</option>
-                  <option value="220">220 dpi (net)</option>
+                  <option value="96" data-i18n="dpi.light">96 dpi (léger)</option>
+                  <option value="150" selected data-i18n="dpi.balanced">150 dpi (équilibré)</option>
+                  <option value="220" data-i18n="dpi.sharp">220 dpi (net)</option>
                 </select>
               </div>
               <div class="field field--inline">
-                <label for="opt-compress-quality">Qualité JPEG</label>
+                <label for="opt-compress-quality" data-i18n="opt.jpegQuality">Qualité JPEG</label>
                 <input type="range" id="opt-compress-quality" min="0.3" max="0.95" step="0.05" value="0.7" />
               </div>
             </div>
           </details>
 
           <details class="opt">
-            <summary><label class="check"><input type="checkbox" id="opt-number" /> Numéroter les pages</label></summary>
+            <summary><label class="check"><input type="checkbox" id="opt-number" /> <span data-i18n="opt.number">Numéroter les pages</span></label></summary>
             <div class="opt__body">
               <div class="field field--inline">
-                <label for="opt-number-pos">Position</label>
+                <label for="opt-number-pos" data-i18n="opt.position">Position</label>
                 <select id="opt-number-pos">
-                  <option value="bottom-center" selected>Bas centre</option>
-                  <option value="bottom-right">Bas droite</option>
-                  <option value="bottom-left">Bas gauche</option>
-                  <option value="top-center">Haut centre</option>
-                  <option value="top-right">Haut droite</option>
-                  <option value="top-left">Haut gauche</option>
+                  <option value="bottom-center" selected data-i18n="pos.bottomCenter">Bas centre</option>
+                  <option value="bottom-right" data-i18n="pos.bottomRight">Bas droite</option>
+                  <option value="bottom-left" data-i18n="pos.bottomLeft">Bas gauche</option>
+                  <option value="top-center" data-i18n="pos.topCenter">Haut centre</option>
+                  <option value="top-right" data-i18n="pos.topRight">Haut droite</option>
+                  <option value="top-left" data-i18n="pos.topLeft">Haut gauche</option>
                 </select>
               </div>
               <div class="field field--inline">
-                <label for="opt-number-start">Commencer à</label>
+                <label for="opt-number-start" data-i18n="opt.startAt">Commencer à</label>
                 <input type="number" id="opt-number-start" value="1" min="0" style="width:80px" />
               </div>
-              <label class="check"><input type="checkbox" id="opt-number-total" /> Afficher « n / total »</label>
+              <label class="check"><input type="checkbox" id="opt-number-total" /> <span data-i18n="opt.showTotal">Afficher « n / total »</span></label>
             </div>
           </details>
 
           <details class="opt">
-            <summary><label class="check"><input type="checkbox" id="opt-watermark" /> Filigrane</label></summary>
+            <summary><label class="check"><input type="checkbox" id="opt-watermark" /> <span data-i18n="opt.watermark">Filigrane</span></label></summary>
             <div class="opt__body">
               <div class="field">
-                <label for="opt-watermark-text">Texte</label>
+                <label for="opt-watermark-text" data-i18n="opt.text">Texte</label>
                 <input type="text" id="opt-watermark-text" placeholder="CONFIDENTIEL" />
               </div>
               <div class="field field--inline">
-                <label for="opt-watermark-opacity">Opacité</label>
+                <label for="opt-watermark-opacity" data-i18n="opt.opacity">Opacité</label>
                 <input type="range" id="opt-watermark-opacity" min="0.05" max="0.5" step="0.05" value="0.18" />
               </div>
             </div>
           </details>
 
           <details class="opt">
-            <summary>Métadonnées (titre, auteur)</summary>
+            <summary data-i18n="opt.metadata">Métadonnées (titre, auteur)</summary>
             <div class="opt__body">
-              <div class="field"><label for="opt-meta-title">Titre</label><input type="text" id="opt-meta-title" /></div>
-              <div class="field"><label for="opt-meta-author">Auteur</label><input type="text" id="opt-meta-author" /></div>
+              <div class="field"><label for="opt-meta-title" data-i18n="opt.metaTitle">Titre</label><input type="text" id="opt-meta-title" /></div>
+              <div class="field"><label for="opt-meta-author" data-i18n="opt.metaAuthor">Auteur</label><input type="text" id="opt-meta-author" /></div>
             </div>
           </details>
         </div>
@@ -169,31 +174,45 @@
         <!-- Options images -->
         <div id="image-options" hidden>
           <div class="field field--inline">
-            <label for="opt-img-format">Format</label>
+            <label for="opt-img-format" data-i18n="opt.format">Format</label>
             <select id="opt-img-format">
-              <option value="png" selected>PNG (sans perte)</option>
-              <option value="jpeg">JPEG (plus léger)</option>
+              <option value="png" selected data-i18n="fmt.pngLossless">PNG (sans perte)</option>
+              <option value="jpeg" data-i18n="fmt.jpegLighter">JPEG (plus léger)</option>
             </select>
           </div>
           <div class="field field--inline">
-            <label for="opt-img-dpi">Résolution</label>
+            <label for="opt-img-dpi" data-i18n="opt.resolution">Résolution</label>
             <select id="opt-img-dpi">
               <option value="96">96 dpi</option>
               <option value="150" selected>150 dpi</option>
               <option value="220">220 dpi</option>
-              <option value="300">300 dpi</option>
+              <option value="300" data-i18n="dpi.300">300 dpi</option>
             </select>
           </div>
           <div class="field field--inline" id="opt-img-quality-wrap" hidden>
-            <label for="opt-img-quality">Qualité JPEG</label>
+            <label for="opt-img-quality" data-i18n="opt.jpegQuality">Qualité JPEG</label>
             <input type="range" id="opt-img-quality" min="0.4" max="0.95" step="0.05" value="0.85" />
           </div>
+        </div>
+
+        <!-- Options OCR -->
+        <div id="ocr-options" hidden>
+          <div class="field field--inline">
+            <label for="opt-ocr-lang" data-i18n="ocr.langLabel">Langue du texte</label>
+            <select id="opt-ocr-lang">
+              <option value="auto" selected data-i18n="ocr.lang.auto">Auto (selon l'app)</option>
+              <option value="fra" data-i18n="ocr.lang.fra">Français</option>
+              <option value="eng" data-i18n="ocr.lang.eng">English</option>
+              <option value="fra+eng" data-i18n="ocr.lang.both">Français + English</option>
+            </select>
+          </div>
+          <p class="opt-note" data-i18n="ocr.note">L'OCR ajoute une couche de texte sélectionnable sous chaque page. Traitement local, peut prendre quelques secondes par page.</p>
         </div>
       </div>
 
       <div class="modal__footer">
-        <button class="btn btn--ghost" data-close-export>Annuler</button>
-        <button id="do-export-btn" class="btn btn--primary">Exporter</button>
+        <button class="btn btn--ghost" data-close-export data-i18n="common.cancel">Annuler</button>
+        <button id="do-export-btn" class="btn btn--primary" data-i18n="export.do">Exporter</button>
       </div>
     </div>
   </div>
@@ -202,45 +221,45 @@
   <div id="blank-modal" class="modal" hidden>
     <div class="modal__panel modal__panel--sm" role="dialog" aria-labelledby="blank-modal-title" aria-modal="true">
       <div class="modal__header">
-        <h2 id="blank-modal-title">Insérer une page blanche</h2>
-        <button class="modal__close" data-close-blank aria-label="Fermer">✕</button>
+        <h2 id="blank-modal-title" data-i18n="blank.title">Insérer une page blanche</h2>
+        <button class="modal__close" data-close-blank data-i18n-aria="common.close" aria-label="Fermer">✕</button>
       </div>
       <div class="modal__body">
         <div class="field field--inline">
-          <label for="blank-format">Format</label>
+          <label for="blank-format" data-i18n="blank.format">Format</label>
           <select id="blank-format">
-            <option value="a4" selected>A4</option>
-            <option value="letter">Lettre US</option>
+            <option value="a4" selected data-i18n="blank.a4">A4</option>
+            <option value="letter" data-i18n="blank.letter">Lettre US</option>
           </select>
         </div>
         <div class="field field--inline">
-          <label for="blank-orientation">Orientation</label>
+          <label for="blank-orientation" data-i18n="blank.orientation">Orientation</label>
           <select id="blank-orientation">
-            <option value="portrait" selected>Portrait</option>
-            <option value="landscape">Paysage</option>
+            <option value="portrait" selected data-i18n="blank.portrait">Portrait</option>
+            <option value="landscape" data-i18n="blank.landscape">Paysage</option>
           </select>
         </div>
         <div class="field field--inline">
-          <label for="blank-position">Position</label>
+          <label for="blank-position" data-i18n="blank.position">Position</label>
           <select id="blank-position">
-            <option value="end" selected>À la fin</option>
-            <option value="after">Après la sélection</option>
+            <option value="end" selected data-i18n="blank.atEnd">À la fin</option>
+            <option value="after" data-i18n="blank.afterSelection">Après la sélection</option>
           </select>
         </div>
       </div>
       <div class="modal__footer">
-        <button class="btn btn--ghost" data-close-blank>Annuler</button>
-        <button id="do-blank-btn" class="btn btn--primary">Insérer</button>
+        <button class="btn btn--ghost" data-close-blank data-i18n="common.cancel">Annuler</button>
+        <button id="do-blank-btn" class="btn btn--primary" data-i18n="blank.insert">Insérer</button>
       </div>
     </div>
   </div>
 
   <!-- Aperçu -->
   <div id="preview-modal" class="preview-modal" hidden>
-    <button id="preview-close" class="preview-modal__close" aria-label="Fermer l'aperçu">✕</button>
-    <button id="preview-prev" class="preview-modal__nav preview-modal__nav--prev" aria-label="Page précédente">‹</button>
-    <img id="preview-image" class="preview-modal__image" alt="Aperçu de la page" />
-    <button id="preview-next" class="preview-modal__nav preview-modal__nav--next" aria-label="Page suivante">›</button>
+    <button id="preview-close" class="preview-modal__close" data-i18n-aria="preview.close" aria-label="Fermer l'aperçu">✕</button>
+    <button id="preview-prev" class="preview-modal__nav preview-modal__nav--prev" data-i18n-aria="preview.prev" aria-label="Page précédente">‹</button>
+    <img id="preview-image" class="preview-modal__image" alt="" />
+    <button id="preview-next" class="preview-modal__nav preview-modal__nav--next" data-i18n-aria="preview.next" aria-label="Page suivante">›</button>
     <div id="preview-caption" class="preview-modal__caption"></div>
   </div>
 
@@ -253,6 +272,7 @@
   <script src="vendor/pdf-lib.min.js"></script>
   <script src="vendor/Sortable.min.js"></script>
   <script src="vendor/jszip.min.js"></script>
+  <script src="vendor/tesseract/tesseract.min.js"></script>
   <script type="module" src="js/app.js"></script>
 </body>
 </html>

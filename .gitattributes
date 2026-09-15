@@ -1,0 +1,6 @@
+# Garantit que ces fichiers restent binaires (aucune conversion de fin de ligne)
+*.wasm binary
+*.gz binary
+*.traineddata binary
+*.png binary
+*.ico binary

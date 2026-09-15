@@ -703,3 +703,23 @@ main {
 .preview-modal__nav:disabled { opacity: 0.25; cursor: default; }
 .preview-modal__nav--prev { left: 24px; }
 .preview-modal__nav--next { right: 24px; }
+
+/* Sélecteur de langue */
+.lang-select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Note explicative (OCR) */
+.opt-note {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}

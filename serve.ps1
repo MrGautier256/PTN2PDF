@@ -29,6 +29,9 @@ $mimeTypes = @{
   ".png"  = "image/png"
   ".ico"  = "image/x-icon"
   ".json" = "application/json"
+  ".wasm" = "application/wasm"
+  ".gz"   = "application/gzip"
+  ".traineddata" = "application/octet-stream"
 }
 
 while ($listener.IsListening) {

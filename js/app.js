@@ -7,6 +7,7 @@ import {
 } from './pdf-utils.js';
 import * as exporter from './export.js';
 import { saveSession, loadSession, clearSession } from './persistence.js';
+import { t, tCount, getLang, setLang, initLang } from './i18n.js';
 
 const THUMB_WIDTH = 260;
 const HISTORY_LIMIT = 60;
@@ -49,6 +50,7 @@ const history = { undo: [], redo: [] };
 
 const el = {
   fileInput: document.getElementById('file-input'),
+  langSelect: document.getElementById('lang-select'),
   dropzone: document.getElementById('dropzone'),
   toolbar: document.getElementById('toolbar'),
   selectAllBtn: document.getElementById('select-all-btn'),
@@ -106,6 +108,8 @@ const el = {
   optImgDpi: document.getElementById('opt-img-dpi'),
   optImgQualityWrap: document.getElementById('opt-img-quality-wrap'),
   optImgQuality: document.getElementById('opt-img-quality'),
+  ocrOptions: document.getElementById('ocr-options'),
+  optOcrLang: document.getElementById('opt-ocr-lang'),
   doExportBtn: document.getElementById('do-export-btn'),
   // Modale page blanche
   blankModal: document.getElementById('blank-modal'),
@@ -213,11 +217,11 @@ async function thumbFor(p) {
 async function addFiles(fileList) {
   const files = Array.from(fileList).filter((f) => isPdf(f) || isImage(f));
   if (!files.length) {
-    showToast('Aucun fichier PDF ou image valide sélectionné.', true);
+    showToast(t('toast.noValidFiles'), true);
     return;
   }
 
-  showLoading('Import en cours…');
+  showLoading(t('loading.importing'));
   pushHistory();
   try {
     for (const file of files) {
@@ -256,7 +260,7 @@ async function addFiles(fileList) {
     scheduleSave();
   } catch (err) {
     console.error(err);
-    showToast(`Impossible de lire un fichier : ${err?.name ?? ''} ${err?.message ?? err}`, true);
+    showToast(t('toast.readError', { error: `${err?.name ?? ''} ${err?.message ?? err}` }), true);
     render();
   } finally {
     hideLoading();
@@ -286,7 +290,7 @@ async function rotatePage(uid, delta) {
 async function rotateSelected(delta) {
   if (!selectedUids.size) return;
   pushHistory();
-  showLoading('Rotation en cours…');
+  showLoading(t('loading.rotating'));
   try {
     await applyRotation(pages.filter((p) => selectedUids.has(p.uid)), delta);
     render();
@@ -409,7 +413,7 @@ async function showPreviewAt(index) {
   if (index < 0 || index >= pages.length) return;
   previewIndex = index;
   const p = pages[index];
-  showLoading('Chargement de l’aperçu…');
+  showLoading(t('loading.preview'));
   try {
     let imgUrl;
     const targetWidth = Math.min(window.innerWidth * 0.85, 1400);
@@ -425,13 +429,13 @@ async function showPreviewAt(index) {
       imgUrl = blankCanvas(p.size, targetWidth).toDataURL('image/png');
     }
     el.previewImage.src = imgUrl;
-    el.previewCaption.textContent = `${labelForPage(p)} - page ${index + 1} / ${pages.length}`;
+    el.previewCaption.textContent = t('caption.pageOf', { label: labelForPage(p), index: index + 1, total: pages.length });
     el.previewModal.hidden = false;
     el.previewPrev.disabled = index === 0;
     el.previewNext.disabled = index === pages.length - 1;
   } catch (err) {
     console.error(err);
-    showToast("Impossible de générer l'aperçu de cette page.", true);
+    showToast(t('toast.previewError'), true);
   } finally {
     hideLoading();
   }
@@ -449,7 +453,7 @@ function closePreview() {
 }
 
 function labelForPage(p) {
-  if (p.type === 'blank') return 'Page blanche';
+  if (p.type === 'blank') return t('label.blankPage');
   return truncate(sourceDocs.get(p.sourceId)?.name ?? '', 40);
 }
 
@@ -478,12 +482,12 @@ function makeIconBtn(label, title, onClick, danger = false) {
 async function exportSinglePage(uid) {
   const idx = pages.findIndex((p) => p.uid === uid);
   if (idx < 0) return;
-  showLoading('Génération de l’image…');
+  showLoading(t('loading.imageGen'));
   try {
     await exporter.exportSinglePageImage(pages[idx], exportCtx, idx);
   } catch (err) {
     console.error(err);
-    showToast("Impossible d'exporter cette page en image.", true);
+    showToast(t('toast.imageExportError'), true);
   } finally {
     hideLoading();
   }
@@ -506,7 +510,7 @@ function buildPageCard(p, index) {
   checkbox.type = 'checkbox';
   checkbox.className = 'page-card__checkbox';
   checkbox.checked = selected;
-  checkbox.setAttribute('aria-label', 'Sélectionner cette page');
+  checkbox.setAttribute('aria-label', t('card.selectAria'));
   checkbox.addEventListener('click', (e) => e.stopPropagation());
   checkbox.addEventListener('change', () => {
     if (checkbox.checked) selectedUids.add(p.uid);
@@ -517,12 +521,12 @@ function buildPageCard(p, index) {
 
   const toolbar = document.createElement('div');
   toolbar.className = 'page-card__toolbar';
-  toolbar.appendChild(makeIconBtn('🔍', 'Prévisualiser en grand', () => openPreview(p.uid)));
-  toolbar.appendChild(makeIconBtn('⟲', 'Pivoter à gauche', () => rotatePage(p.uid, -90)));
-  toolbar.appendChild(makeIconBtn('⟳', 'Pivoter à droite', () => rotatePage(p.uid, 90)));
-  toolbar.appendChild(makeIconBtn('⧉', 'Dupliquer', () => duplicateUids([p.uid])));
-  toolbar.appendChild(makeIconBtn('🖼', 'Exporter en image', () => exportSinglePage(p.uid)));
-  toolbar.appendChild(makeIconBtn('✕', 'Supprimer cette page', () => deletePage(p.uid), true));
+  toolbar.appendChild(makeIconBtn('🔍', t('card.preview'), () => openPreview(p.uid)));
+  toolbar.appendChild(makeIconBtn('⟲', t('card.rotateLeft'), () => rotatePage(p.uid, -90)));
+  toolbar.appendChild(makeIconBtn('⟳', t('card.rotateRight'), () => rotatePage(p.uid, 90)));
+  toolbar.appendChild(makeIconBtn('⧉', t('card.duplicate'), () => duplicateUids([p.uid])));
+  toolbar.appendChild(makeIconBtn('🖼', t('card.exportImage'), () => exportSinglePage(p.uid)));
+  toolbar.appendChild(makeIconBtn('✕', t('card.delete'), () => deletePage(p.uid), true));
 
   const thumbWrap = document.createElement('div');
   thumbWrap.className = 'page-card__thumb-wrap';
@@ -534,7 +538,7 @@ function buildPageCard(p, index) {
   if (p.type !== 'pdf') {
     const badge = document.createElement('span');
     badge.className = 'page-card__badge';
-    badge.textContent = p.type === 'image' ? 'Image' : 'Vierge';
+    badge.textContent = p.type === 'image' ? t('badge.image') : t('badge.blank');
     thumbWrap.appendChild(badge);
   }
 
@@ -586,8 +590,7 @@ function updateSelectionVisuals() {
   });
   el.pagesGrid.classList.toggle('pages-grid--selecting', selectedUids.size > 0);
   el.selectionBar.hidden = selectedUids.size === 0;
-  const n = selectedUids.size;
-  el.selectionCount.textContent = `${n} page${n > 1 ? 's' : ''} sélectionnée${n > 1 ? 's' : ''}`;
+  el.selectionCount.textContent = tCount('selected', selectedUids.size);
 }
 
 function render() {
@@ -611,8 +614,8 @@ function render() {
   el.exportBar.hidden = pages.length === 0;
   el.clearAllBtn.hidden = pages.length === 0;
   el.dropzone.classList.toggle('dropzone--compact', hasSources);
-  el.pageCount.textContent = `${pages.length} page${pages.length > 1 ? 's' : ''}`;
-  el.exportSummary.textContent = `${pages.length} page${pages.length > 1 ? 's' : ''} prête${pages.length > 1 ? 's' : ''} à l'export`;
+  el.pageCount.textContent = tCount('pages', pages.length);
+  el.exportSummary.textContent = tCount('ready', pages.length);
   updateHistoryButtons();
 }
 
@@ -648,13 +651,13 @@ async function doSave() {
     pageIndex: p.pageIndex, extraRotation: p.extraRotation, thumbUrl: p.thumbUrl, size: p.size,
   }));
   const ok = await saveSession({ sources, pages: pageData, filename: exportState.filename });
-  if (!ok && pages.length) showToast('Session non sauvegardée (stockage saturé ?).', true);
+  if (!ok && pages.length) showToast(t('toast.sessionNotSaved'), true);
 }
 
 async function restoreSession() {
   const s = await loadSession();
   if (!s || !s.pages || !s.pages.length) return;
-  showLoading('Restauration de la session…');
+  showLoading(t('loading.restoring'));
   try {
     for (const src of s.sources) {
       if (src.type === 'pdf') {
@@ -669,10 +672,10 @@ async function restoreSession() {
     colorIndex = s.sources.length;
     if (s.filename) exportState.filename = s.filename;
     render();
-    showToast('Session précédente restaurée.');
+    showToast(t('toast.sessionRestored'));
   } catch (err) {
     console.error(err);
-    showToast('Session précédente illisible, elle a été ignorée.', true);
+    showToast(t('toast.sessionUnreadable'), true);
     await clearSession();
   } finally {
     hideLoading();
@@ -691,22 +694,26 @@ function refreshExportUI() {
   const mode = currentExportMode();
   const isImages = mode === 'images';
   const isSplit = mode === 'split';
-  el.pdfOptions.hidden = isImages;
+  const isOcr = mode === 'ocr';
+  el.pdfOptions.hidden = isImages || isOcr;
   el.imageOptions.hidden = !isImages;
+  el.ocrOptions.hidden = !isOcr;
   // La compression (rastérisation) n'a de sens que sur un PDF unique.
   el.optCompressWrap.style.display = isSplit ? 'none' : '';
-  el.exportFilenameLabel.textContent = isImages || isSplit ? 'Nom de l’archive ZIP' : 'Nom du fichier';
+  el.exportFilenameLabel.textContent = isImages || isSplit ? t('export.filenameZip') : t('export.filename');
   el.optImgQualityWrap.hidden = el.optImgFormat.value !== 'jpeg';
 }
 
+function updateExportCounts() {
+  el.optMergeCount.textContent = `(${tCount('pages', pages.length)})`;
+  el.optSelectionCount.textContent = `(${tCount('pages', selectedUids.size)})`;
+}
+
 function openExport() {
-  const n = pages.length;
-  const sel = selectedUids.size;
-  el.optMergeCount.textContent = `(${n} page${n > 1 ? 's' : ''})`;
-  el.optSelectionCount.textContent = `(${sel} page${sel > 1 ? 's' : ''})`;
+  updateExportCounts();
   const selRadio = document.querySelector('input[name="export-mode"][value="selection"]');
-  selRadio.disabled = sel === 0;
-  if (sel === 0 && currentExportMode() === 'selection') {
+  selRadio.disabled = selectedUids.size === 0;
+  if (selectedUids.size === 0 && currentExportMode() === 'selection') {
     document.querySelector('input[name="export-mode"][value="merge"]').checked = true;
   }
   el.exportFilename.value = exportState.filename;
@@ -746,11 +753,11 @@ async function runExport() {
   exportState.filename = filename;
   const list = mode === 'selection' ? pages.filter((p) => selectedUids.has(p.uid)) : pages;
   if (!list.length) {
-    showToast('Rien à exporter.', true);
+    showToast(t('toast.nothingToExport'), true);
     return;
   }
   closeExport();
-  showLoading('Génération en cours…');
+  showLoading(t('loading.generating'));
   try {
     if (mode === 'images') {
       await exporter.exportImagesZip(list, exportCtx, {
@@ -760,6 +767,14 @@ async function runExport() {
       }, filename);
     } else if (mode === 'split') {
       await exporter.exportSplitZip(list, exportCtx, readExportOptions(), filename);
+    } else if (mode === 'ocr') {
+      const sel = el.optOcrLang.value;
+      const langs = sel === 'auto' ? (getLang() === 'fr' ? 'fra' : 'eng') : sel;
+      await exporter.exportOcrPdf(list, exportCtx, {
+        langs,
+        dpi: 200,
+        onProgress: (current, total) => showLoading(t('loading.ocr', { current, total })),
+      }, filename);
     } else if (el.optCompress.checked) {
       await exporter.exportCompressed(list, exportCtx, {
         dpi: parseInt(el.optCompressDpi.value, 10),
@@ -768,11 +783,11 @@ async function runExport() {
     } else {
       await exporter.exportPdf(list, exportCtx, readExportOptions(), filename);
     }
-    showToast('Export terminé.');
+    showToast(t('toast.exportDone'));
     scheduleSave();
   } catch (err) {
     console.error(err);
-    showToast("Erreur lors de l'export.", true);
+    showToast(t('toast.exportError'), true);
   } finally {
     hideLoading();
   }
@@ -926,6 +941,14 @@ el.clearAllBtn.addEventListener('click', clearAll);
 el.undoBtn.addEventListener('click', undo);
 el.redoBtn.addEventListener('click', redo);
 
+el.langSelect.addEventListener('change', (e) => {
+  setLang(e.target.value);
+  el.langSelect.value = getLang();
+  updateExportCounts();
+  render();
+  if (!el.exportModal.hidden) refreshExportUI();
+});
+
 el.selectAllBtn.addEventListener('click', selectAll);
 el.invertBtn.addEventListener('click', invertSelection);
 el.insertBlankBtn.addEventListener('click', openBlank);
@@ -1013,6 +1036,9 @@ document.addEventListener('drop', (e) => {
 /* ------------------------------------------------------------------ */
 /*  Démarrage                                                          */
 /* ------------------------------------------------------------------ */
+
+initLang();
+el.langSelect.value = getLang();
 
 try {
   const savedZoom = localStorage.getItem('ptn2pdf.zoom');

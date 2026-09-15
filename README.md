@@ -27,9 +27,11 @@ PTN2PDF est un outil de manipulation de PDF **100 % local**. Aucun serveur dista
 - **Découper** : un PDF par document source, le tout dans une archive ZIP.
 - **PDF → images** : exporter les pages en PNG ou JPEG dans un ZIP (résolution réglable), ou une page seule en un clic.
 - **Compresser** : rastérisation des pages en JPEG (résolution et qualité réglables) pour réduire le poids.
+- **PDF cherchable (OCR)** : reconnaissance de texte **100 % locale** (moteur et données de langue embarqués, aucun accès réseau) qui ajoute une couche de texte sélectionnable sous chaque page.
 - **Finitions** : numérotation des pages, filigrane, édition des métadonnées (titre, auteur).
 
 ### Confort
+- **Langues** : interface en **français** et **anglais**, détectée automatiquement selon la langue du système (modifiable via le sélecteur en haut à droite).
 - **Persistance de session** : votre travail est conservé automatiquement en local (IndexedDB) et restauré à la réouverture. Rien ne quitte l'appareil.
 - **Raccourcis clavier** : `Suppr` (supprimer la sélection), `Ctrl+A` (tout sélectionner), `Ctrl+Z`/`Ctrl+Y` (annuler/rétablir), `Échap` (fermer/désélectionner), flèches (naviguer dans l'aperçu).
 
@@ -71,6 +73,7 @@ Ou double-cliquez sur `build.bat`. L'exécutable portable est généré dans le 
 | Rendu des pages PDF | [pdf.js](https://mozilla.github.io/pdf.js/) |
 | Manipulation / export PDF | [pdf-lib](https://pdf-lib.js.org/) |
 | Archives ZIP | [JSZip](https://stuk.github.io/jszip/) |
+| OCR (hors ligne) | [Tesseract.js](https://tesseract.projectnaptha.com/) |
 | Glisser-déposer | [SortableJS](https://sortablejs.github.io/Sortable/) |
 | Application de bureau | [Electron](https://www.electronjs.org/) + [electron-builder](https://www.electron.build/) |
 | Interface | HTML, CSS et JavaScript natif (modules ES), sans framework |
@@ -86,9 +89,11 @@ PTN2PDF/
 ├── js/
 │   ├── app.js            # État, interface et orchestration
 │   ├── pdf-utils.js      # Rendu pdf.js et images
-│   ├── export.js         # Exports (fusion, découpe, compression, images, finitions)
-│   └── persistence.js    # Sauvegarde de session locale (IndexedDB)
+│   ├── export.js         # Exports (fusion, découpe, compression, images, OCR, finitions)
+│   ├── persistence.js    # Sauvegarde de session locale (IndexedDB)
+│   └── i18n.js           # Traductions (fr/en) et détection de langue
 ├── vendor/               # Bibliothèques (pdf.js, pdf-lib, JSZip, SortableJS)
+│   └── tesseract/        # Moteur OCR et données de langue (fra, eng) embarqués
 ├── assets/               # Icônes
 ├── electron/main.js      # Application de bureau Electron
 ├── serve.ps1             # Serveur statique local (PowerShell)
@@ -98,7 +103,7 @@ PTN2PDF/
 
 ## Confidentialité
 
-Aucune donnée ne quitte votre appareil. Les PDF sont lus, traités et réexportés localement, que ce soit dans le navigateur ou dans l'application Electron (qui sert les fichiers depuis un serveur local `127.0.0.1`).
+Aucune donnée ne quitte votre appareil. Les PDF sont lus, traités et réexportés localement, que ce soit dans le navigateur ou dans l'application Electron (qui sert les fichiers depuis un serveur local `127.0.0.1`). Même l'OCR fonctionne hors ligne : le moteur et les données de langue sont embarqués dans `vendor/tesseract/`, aucun téléchargement ni CDN.
 
 ## Licence
 
