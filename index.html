@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PTN2PDF</title>
+<link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
+<link rel="alternate icon" type="image/png" href="assets/icon-32.png" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header__title">
+      <img src="assets/icon.svg" alt="" class="app-header__logo" width="36" height="36" />
+      <div>
+        <h1>PTN2PDF</h1>
+        <p>Fusionnez, réordonnez et nettoyez vos PDF. Tout reste sur votre machine, aucun fichier n'est envoyé nulle part.</p>
+      </div>
+    </div>
+    <div class="app-header__actions">
+      <button id="clear-all-btn" class="btn btn--ghost" hidden>Tout effacer</button>
+      <label class="btn btn--primary" for="file-input">+ Ajouter des PDF</label>
+    </div>
+  </header>
+
+  <input type="file" id="file-input" accept="application/pdf" multiple hidden />
+
+  <main>
+    <section id="dropzone" class="dropzone">
+      <div class="dropzone__content">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3v12m0-12 4 4m-4-4-4 4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p><strong>Glissez-déposez vos fichiers PDF ici</strong></p>
+        <p class="dropzone__hint">ou cliquez pour parcourir vos fichiers - plusieurs fichiers possibles</p>
+      </div>
+    </section>
+
+    <section id="pages-panel" class="pages-panel" hidden>
+      <div class="pages-panel__meta">
+        <span id="page-count" class="page-count"></span>
+        <span class="pages-panel__hint">Glissez une vignette pour changer l'ordre des pages - cochez ou cliquez-glissez pour en sélectionner plusieurs</span>
+      </div>
+      <div id="selection-bar" class="selection-bar" hidden>
+        <span id="selection-count"></span>
+        <div class="selection-bar__actions">
+          <button id="sel-rotate-left" type="button" class="btn btn--ghost" title="Pivoter à gauche">⟲</button>
+          <button id="sel-rotate-right" type="button" class="btn btn--ghost" title="Pivoter à droite">⟳</button>
+          <button id="sel-delete" type="button" class="btn btn--ghost">Supprimer la sélection</button>
+          <button id="sel-clear" type="button" class="btn btn--ghost">Désélectionner</button>
+        </div>
+      </div>
+      <div id="pages-grid" class="pages-grid" role="list"></div>
+    </section>
+
+    <div id="empty-state" class="empty-state" hidden>
+      <p>Toutes les pages ont été supprimées.</p>
+    </div>
+  </main>
+
+  <footer id="export-bar" class="export-bar" hidden>
+    <label class="export-bar__filename">
+      <span>Nom du fichier</span>
+      <input id="output-filename" type="text" value="document-fusionne.pdf" />
+    </label>
+    <button id="export-btn" class="btn btn--primary btn--large">Télécharger le PDF</button>
+  </footer>
+
+  <div id="preview-modal" class="preview-modal" hidden>
+    <button id="preview-close" class="preview-modal__close" aria-label="Fermer l'aperçu">✕</button>
+    <img id="preview-image" class="preview-modal__image" alt="Aperçu de la page" />
+    <div id="preview-caption" class="preview-modal__caption"></div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+  <div id="loading-overlay" class="loading-overlay" hidden>
+    <div class="spinner" aria-hidden="true"></div>
+    <p id="loading-text">Traitement en cours…</p>
+  </div>
+
+  <script src="vendor/pdf-lib.min.js"></script>
+  <script src="vendor/Sortable.min.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

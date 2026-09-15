@@ -1,0 +1,43 @@
+{
+  "name": "ptn2pdf",
+  "version": "1.0.0",
+  "description": "Fusionner, réordonner et nettoyer des PDF, 100% local.",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "powershell -NoProfile -ExecutionPolicy Bypass -File serve.ps1",
+    "electron:start": "electron .",
+    "dist": "electron-builder --win portable"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^43.0.0",
+    "electron-builder": "^25.0.0",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.1.200",
+    "sortablejs": "^1.15.7"
+  },
+  "build": {
+    "appId": "com.gautier.ptn2pdf",
+    "productName": "PTN2PDF",
+    "asar": false,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "index.html",
+      "css/**/*",
+      "js/**/*",
+      "vendor/**/*",
+      "assets/**/*",
+      "!**/*.map"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "assets/icon.ico"
+    }
+  }
+}
